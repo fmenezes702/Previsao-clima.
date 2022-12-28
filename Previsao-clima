@@ -1,0 +1,55 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+
+df = pd.read_csv("seattle-weather.csv")
+
+df #mostrando dataframe
+
+df.head()  #topo do dataframe
+
+df.info()
+
+df.describe()
+
+plt.figure(figsize=(18,6))
+sns.pairplot(df.drop('date',axis=1),hue='weather')
+plt.show()
+
+#mostrando imagens com estatísticas.
+
+#por não estarem em formato float, as datas serão excluídas.
+df = df.drop(columns=['date'])
+
+#transformando strings em variáveis numéricas
+
+df.replace(to_replace ="rain", value = 2, inplace = True)
+df.replace(to_replace ="drizzle", value = 3, inplace = True)
+df.replace(to_replace ="fog", value = 4, inplace = True)
+df.replace(to_replace ="sun", value = 5, inplace = True)
+df.replace(to_replace ="snow", value = 1, inplace = True)
+
+df['weather'].value_counts()
+
+x = df.drop(columns=['weather'])
+y = df['weather']
+
+x_treino,x_teste,y_treino,y_teste= train_test_split(x,y,test_size=0.2,random_state=42)
+
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(x_treino,y_treino)
+
+#usando naiva bayes para calcular as acurácias
+
+from sklearn.naive_bayes import GaussianNB
+
+gas = GaussianNB()
+gas.fit(x_treino,y_treino)
+
+acuracia = gas.score(x_teste,y_teste)
+acuracia
+
+#acuracia do modelo foi de cerca de 83%.
